@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.set("trust proxy", true);
 
 router.init(app);
-let port = process.env.PORT || 3000;
+let port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

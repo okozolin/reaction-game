@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {platformColors} from "../constants/colors";
 import {isNameFieldInvalid} from "../utils/gameUtils";
 import {InputProps} from "../../types";
+import {createUser} from "../services/api";
 
 const StartContainer = styled.div`
   display: flex;
@@ -43,6 +44,8 @@ const StartButton = styled.button`
   border-radius: 6px;
   padding: 30px;
   margin-top: 40px;
+  font-size: 2rem;
+  color: ${platformColors.darkGrey};
   width: 520px;
 `
 const Start: React.FC = () => {
@@ -52,14 +55,22 @@ const Start: React.FC = () => {
         setUserName(e.target.value)
     }
 
-    const onGameStart = () => {
+    const onGameStart = async () => {
         console.log("clicked start game")
-    }
+        try {
+            const response = await createUser(userName);
+            console.log("Create successful:", response);
+        } catch (error) {
+            console.error("Create failed:", error);
+        }
+    };
+
+
     const isNameInvalid = isNameFieldInvalid(userName)
     return (
         <StartContainer>
             <Intro>
-                <h2> Game Intro</h2>
+                <h2 style = {{color: platformColors.darkGrey}}> Game Intro</h2>
                 In the game, a shape will be shown to you in a random location on the screen (left/right),
                 you will have 1 second to react and enter on which side of the screen the shape was displayed.
                 Press:
@@ -79,7 +90,7 @@ const Start: React.FC = () => {
             />
             {isNameInvalid && (
                 <ErrorMessage>
-                    Valid name may contain lower and upper cases letters, numbers and dash (-) and underscore (_) and is not longer then 60 characters.
+                    Valid name may contain lower and upper cases letters, numbers and dash (-) and underscore (_), no spaces and is not longer then 60 characters.
                 </ErrorMessage>)
             }
             <StartButton onClick={onGameStart} disabled={isNameInvalid}>
