@@ -13,6 +13,9 @@ By the user's reaction, feedback will be displayed.
 ### Client
 The app starts with a page for inserting the user name and a ‘START’ button. 
 The moment the user clicks ‘START’ the game loads in a waiting state. 
+
+![Not found](startPage.png)
+
 During the waiting state, the user is not supposed to do anything. 
 This state lasts randomly between 2-5 seconds. 
 After the waiting state, show the user an indicator on the left or right side of the screen. 
@@ -23,7 +26,7 @@ During the indicator is visible, the user is expected to tap the 'a' or 'l' key 
 
 ● 'l' if the indicator is on the right side. 
 
-Going to inknown page will lead to this `NotFound` page:
+Going to unknown page will lead to this `NotFound` page:
 
 ![Not found](oops.png)
 #### States:
@@ -58,3 +61,31 @@ Enrich each row with this data.
 
 In addition to storing the data, create an endpoint returning the list of users sorted by the number of steps they reached. 
 No UI for that.
+
+## Getting Started
+Git clone the project to your computer, and run
+
+```bash
+npm install
+```
+Run server and client from your terminal.
+They are both configured to the ports specified below.
+### Development mode
+
+- For the Server
+
+```bash
+npm start
+```
+
+- For the Client
+
+```bash
+npm start
+```
+
+- ports
+
+  Client: http://localhost:3000
+
+  Server: http://localhost:5000
