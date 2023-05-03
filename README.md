@@ -62,6 +62,12 @@ Enrich each row with this data.
 In addition to storing the data, create an endpoint returning the list of users sorted by the number of steps they reached. 
 No UI for that.
 
+We can see the list of sirted users by the number of stepd completed, with this url:
+
+`localhost:5000/users`
+
+![Sorted users](sortedUsers.png)
+
 ## Getting Started
 Git clone the project to your computer, and run
 
