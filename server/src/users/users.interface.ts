@@ -1,7 +1,7 @@
 
 export interface User {
     id: number;
-    name: string;
+    userName: string;
     steps: number;
     gender: string;
     richData: object;

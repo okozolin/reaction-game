@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import styled from "styled-components";
 import WaitingState from "./WaitingState";
 import Indicator from "./Indicator";
+import {updateUser} from "../services/api";
+import { useLocation } from "react-router-dom"
 
-
+import {prompts} from "../constants/prompts";
 const GamePageWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -13,59 +15,68 @@ const GamePageWrapper = styled.div`
 `;
 const GamePage: React.FC = () => {
     const [waiting, setWaiting] = useState<boolean>(true);
-    const [position, setPosition] = useState<"left" | "right">("left");
+    const [position, setPosition] = useState<string>("left");
     const [feedback, setFeedback] = useState<string>("");
+    const location = useLocation()
+    const userData = location.state.userDate
+    const feedbackRef = useRef<string>("")
 
     useEffect(() => {
         if (!waiting) {
             const timeout = setTimeout(() => {
-                setFeedback("");
+                setFeedback(feedbackRef.current = prompts.game.tooLate);
+                restartGame()
             }, 1000);
-            return () => clearTimeout(timeout);
+            return () => {
+                clearTimeout(timeout);
+            };
         }
     }, [waiting]);
-    const handleKeyDown = (event: KeyboardEvent) => {
+
+    useEffect(() => {
+        window.addEventListener("keydown", onKeyDown);
+        return () => window.removeEventListener("keydown", onKeyDown);
+    }, [waiting, position]);
+
+    const onKeyDown = async (event: KeyboardEvent) => {
         if (waiting) {
-            setFeedback("Too Soon");
+            setFeedback(feedbackRef.current = prompts.game.tooSoon);
         } else {
-            if ((event.key === "a" && position === "left") ||
-                (event.key === "l" && position === "right")) {
-                setFeedback("Success");
+            if ((event.key === "a" && position === prompts.game.left) ||
+                (event.key === "l" && position === prompts.game.right)) {
+                setFeedback(feedbackRef.current = prompts.game.success);
             } else {
-                setFeedback("Wrong Key");
+                setFeedback(feedbackRef.current = prompts.game.wrongKey);
             }
-            // setWaiting(true);
-            restartGame();
+            try {
+                await restartGame();
+            } catch (error) {
+                console.error('Error restarting game:', error);
+            }
         }
     };
 
-    const restartGame = () => {
+    const restartGame = useCallback(async () => {
         setWaiting(true);
-        setTimeout(() => {
-            setPosition(Math.random() < 0.5 ? "left" : "right");
-            setWaiting(false);
-            setFeedback('');
-            setTimeout(() => {
-                if (waiting) {
-                    setFeedback('Too late!');
-                    restartGame();
-                }
-            }, 1000);
-        }, Math.floor(Math.random() * 3000) + 2000);
-    };
+        setPosition(Math.random() < 0.5 ? prompts.game.left : prompts.game.right);
+        if (feedbackRef.current === prompts.game.success) {
+            try {
+                await updateUser(userData.id, 1);
+            } catch (error) {
+                console.error("Update failed:", error);
+            }
+        }
+    },[feedbackRef])
 
-    useEffect(() => {
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [waiting, position]);
+    const onCountdownComplete = (result : boolean) => {
+        setWaiting(result)
+    }
     return (
         <GamePageWrapper>
             {!waiting && <Indicator position={position} />}
-            {/*{feedback && <Feedback success={feedback === "Success"}>{feedback}</Feedback>}*/}
             {waiting && <WaitingState
-                feedback={"orit feedback"}
-                onCountdownComplete={(result) => setWaiting(result)}
-                // waiting={waiting} setWaiting={setWaiting}
+                feedback={feedback}
+                onCountdownComplete={onCountdownComplete}
             />}
         </GamePageWrapper>
     );

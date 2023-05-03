@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import {InputProps} from "../../types";
+import {FeedbackProps, StateProps} from "../../types";
+import {prompts} from "../constants/prompts";
 
-interface StateProps {
-    feedback: string;
-    onCountdownComplete: (result: boolean) => void;
-}
-interface FeedbackProps {
-    feedback: string;
-}
 
 const CountdownText = styled.h2`
   margin-top: 0;
@@ -20,11 +14,16 @@ const FeedbackText = styled.h3.attrs<FeedbackProps>((props) => ({
   margin-top: 0;
   margin-bottom: 2rem;
   font-size: 2rem;
-  color: ${({ feedback }) => (feedback === "Success" ? "green" : "red")};
+  color: ${({ feedback }) => (feedback === prompts.game.success ? "green" : "red")};
 `;
-
+const WaitingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`
 const WaitingState = ({ feedback, onCountdownComplete }: StateProps) => {
-    const [countdown, setCountdown] = useState(5);
+    const [countdown, setCountdown] = useState(Math.floor(Math.random() * (3+1)) + 2);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -41,10 +40,10 @@ const WaitingState = ({ feedback, onCountdownComplete }: StateProps) => {
     }, [countdown, onCountdownComplete]);
 
     return (
-        <div>
+        <WaitingWrapper>
             <CountdownText>{countdown}</CountdownText>
             <FeedbackText feedback={feedback}>{feedback}</FeedbackText>
-        </div>
+        </WaitingWrapper>
     );
 };
 

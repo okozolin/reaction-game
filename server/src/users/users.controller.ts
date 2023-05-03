@@ -13,12 +13,12 @@ const getUsers = (req: Request, res: Response) => {
 usersRouter.get("/", getUsers);
 
 const createUser = async (req: Request, res: Response) => {
-    const { name } = req.body;
-    const gender = await UserService.getGenderByName(name)
+    const { userName } = req.body;
+    const gender = await UserService.getGenderByName(userName)
     const richData = await UserService.getRichData(gender)
     const user: User = {
         id: generateUserId(),
-        name,
+        userName,
         steps: 0,
         gender,
         richData,

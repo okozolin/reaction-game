@@ -53,7 +53,7 @@ interface StartPageProps {
     setGameAllowed: (result: boolean) => void;
 }
 const StartPage: React.FC<StartPageProps> = ({setGameAllowed}) => {
-    const [userName, setUserName] = useState<string | undefined>()
+    const [userName, setUserName] = useState<string>("")
     const navigate = useNavigate();
     const onInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         console.log("typing name==", e.target.value)
@@ -63,10 +63,10 @@ const StartPage: React.FC<StartPageProps> = ({setGameAllowed}) => {
     const onGameStart = async () => {
         console.log("clicked start game")
         try {
-            const response = await createUser(userName);
+            const response = await createUser(userName?.trim());
             console.log("Create successful:", response);
             setGameAllowed(true)
-            navigate("/game");
+            navigate("/game", {state: {userDate: response}});
         } catch (error) {
             console.error("Create failed:", error);
         }
