@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import {platformColors} from "../constants/colors";
 import {isNameFieldInvalid} from "../utils/gameUtils";
 import {InputProps} from "../../types";
@@ -48,8 +49,12 @@ const StartButton = styled.button`
   color: ${platformColors.darkGrey};
   width: 520px;
 `
-const Start: React.FC = () => {
+interface StartPageProps {
+    setGameAllowed: (result: boolean) => void;
+}
+const StartPage: React.FC<StartPageProps> = ({setGameAllowed}) => {
     const [userName, setUserName] = useState<string | undefined>()
+    const navigate = useNavigate();
     const onInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         console.log("typing name==", e.target.value)
         setUserName(e.target.value)
@@ -60,6 +65,8 @@ const Start: React.FC = () => {
         try {
             const response = await createUser(userName);
             console.log("Create successful:", response);
+            setGameAllowed(true)
+            navigate("/game");
         } catch (error) {
             console.error("Create failed:", error);
         }
@@ -100,4 +107,4 @@ const Start: React.FC = () => {
     );
 }
 
-export default Start;
+export default StartPage;

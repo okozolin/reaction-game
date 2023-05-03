@@ -1,8 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
+import { Routes, Route } from "react-router-dom";
 import styled from "styled-components";
 import {MdFace} from "react-icons/md";
-import Start from "./components/start";
+import StartPage from "./components/StartPage";
 import {platformColors} from "./constants/colors";
+import GamePage from "./components/GamePage";
+import NotFound from "./components/NotFound";
 
 const MyLogo = styled.div`
   color: ${platformColors.lightPink}
@@ -22,16 +25,23 @@ const AppContainer = styled.div`
   align-items: center;
 `
 function App() {
+    const [gameAllowed, setGameAllowed] = useState(false)
   return (
-    <AppContainer>
-        <Header>
-            <MyLogo>
-                <MdFace color={platformColors.lightPink}/>
-                oritkozolin 2023
-            </MyLogo>
-        </Header>
-        <Start />
-    </AppContainer>
+      <AppContainer>
+          <Header>
+              <MyLogo>
+                  <MdFace color={platformColors.lightPink} />
+                  oritkozolin 2023
+              </MyLogo>
+          </Header>
+          <Routes>
+              <Route
+                path="/"
+                element={<StartPage setGameAllowed={setGameAllowed} />} />
+              {gameAllowed && <Route path="/game" element={<GamePage/>}/>}
+              <Route path="*" element={<NotFound />} />
+          </Routes>
+      </AppContainer>
   );
 }
 
